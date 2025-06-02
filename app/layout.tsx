@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { GiftBuilderProvider } from '@/context/GiftBuilderContext';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -8,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Gift Hunt - Find the Perfect Gift",
-  description: "Help find the perfect gift by understanding what people really want.",
+  title: "Gift Finder - Build the Perfect Gift Message",
+  description: "Create personalized gift messages with style and fun",
 };
 
 export default function RootLayout({
@@ -20,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
+        <GiftBuilderProvider>
+          {children}
+        </GiftBuilderProvider>
       </body>
     </html>
   );

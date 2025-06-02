@@ -1,9 +1,12 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { PreviewCard } from '@/components/ui/PreviewCard';
+import { useGiftBuilder } from '@/context/GiftBuilderContext';
 
 const FUNNY_PLACEHOLDERS = [
   "e.g. The Coffee Whisperer ☕️",
@@ -18,16 +21,15 @@ const DEFAULT_PLACEHOLDER = "Enter their name or nickname";
 
 export default function NameStep() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const occasion = searchParams.get('occasion');
-  const [name, setName] = useState('');
+  const { data, setData } = useGiftBuilder();
+  const [name, setName] = useState(data.name);
   const [error, setError] = useState<string | null>(null);
   const [placeholder, setPlaceholder] = useState(DEFAULT_PLACEHOLDER);
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
-    if (!occasion) router.push('/flow/start');
-  }, [occasion, router]);
+    if (!data.occasion) router.push('/flow/start');
+  }, [data.occasion, router]);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -52,7 +54,13 @@ export default function NameStep() {
       setError('Name should be at least 2 characters');
       return;
     }
-    router.push(`/flow/style?occasion=${encodeURIComponent(occasion!)}&name=${encodeURIComponent(name)}`);
+    confetti({
+      particleCount: 30,
+      spread: 50,
+      origin: { y: 0.6 }
+    });
+    setData({ name: name.trim() });
+    router.push('/flow/style');
   };
 
   return (
@@ -60,86 +68,92 @@ export default function NameStep() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400 bg-400 animate-gradient-move"
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-white"
     >
-      <ProgressBar currentStep={2} totalSteps={5} />
-
       <button
         onClick={() => router.back()}
-        className="absolute top-8 left-8 text-white hover:text-white/80 transition"
+        className="absolute top-8 left-8 bg-white text-black px-6 py-3 rounded-full font-semibold 
+                   shadow-lg transition hover:shadow-xl hover:scale-105"
       >
         ← Back
       </button>
 
-      {occasion && (
-        <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-white/80 mb-2"
-        >
-          Occasion: {occasion}
-        </motion.p>
-      )}
+      <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
+        <div className="w-full max-w-2xl">
+          <ProgressBar currentStep={2} totalSteps={4} />
+        </div>
+        
+        <div className="mt-8 w-full flex flex-col items-center max-w-2xl">
+          <PreviewCard />
 
-      <motion.h1
-        className="text-3xl sm:text-4xl font-bold text-center mb-6 text-white drop-shadow-lg"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        Who's this for?
-      </motion.h1>
-
-      <div className="relative w-full max-w-md">
-        <input
-          type="text"
-          placeholder={placeholder}
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-            setError(null);
-          }}
-          className="mb-6 w-full p-3 border border-white/20 rounded-lg shadow-sm bg-white/90
-                   focus:outline-none focus:ring-2 focus:ring-white focus:bg-white
-                   transition-all duration-300"
-        />
-        <AnimatePresence>
-          {isValid && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              className="absolute right-3 top-3 text-green-500"
-            >
-              ✓
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <AnimatePresence>
-        {error && (
-          <motion.p
+          <motion.h1
+            className="text-3xl sm:text-4xl font-bold text-center mb-6 text-black"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="text-sm text-red-200 mb-4"
+            transition={{ delay: 0.2 }}
           >
-            {error}
-          </motion.p>
-        )}
-      </AnimatePresence>
+            Who's this for?
+          </motion.h1>
 
-      <motion.button
-        onClick={handleNext}
-        disabled={!name.trim()}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="bg-white text-black px-8 py-3 rounded-full font-semibold 
-                   disabled:opacity-50 shadow-lg transition hover:shadow-xl"
-      >
-        Next
-      </motion.button>
+          <div className="w-full max-w-md">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder={placeholder}
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setError(null);
+                }}
+                className="w-full p-3 border border-black/20 rounded-lg shadow-sm bg-white
+                         focus:outline-none focus:ring-2 focus:ring-black focus:bg-white
+                         transition-all duration-300"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && isValid) {
+                    handleNext();
+                  }
+                }}
+              />
+              <AnimatePresence>
+                {isValid && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="absolute right-3 top-3 text-green-500"
+                  >
+                    ✓
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-sm text-red-500 mt-2"
+                >
+                  {error}
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            <motion.button
+              onClick={handleNext}
+              disabled={!name.trim()}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 
+                       rounded-full font-semibold disabled:opacity-50 shadow-lg transition hover:shadow-xl"
+            >
+              Next
+            </motion.button>
+          </div>
+        </div>
+      </div>
     </motion.main>
   );
 } 
