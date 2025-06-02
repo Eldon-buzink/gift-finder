@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
+import { Hero } from "@/components/ui/Hero";
 
 export default function LandingPage() {
   const usps = [
     {
       emoji: "\uD83C\uDFAF",
       title: "No more guessing games",
-      text: "Stop stressing about what they *might* like. Just ask (without them knowing it’s you) and get them something they’ll actually love.",
+      text: "Stop stressing about what they *might* like. Just ask (without them knowing it's you) and get them something they'll actually love.",
     },
     {
       emoji: "⏱️",
@@ -44,20 +45,12 @@ export default function LandingPage() {
           <Link href="#how">How it works</Link>
           <Link href="#faq">FAQ</Link>
           <Link href="/login">Login</Link>
-          <Link href="/create">Create a Gift</Link>
+          <Link href="/login" className="text-black hover:text-gray-800">Create a Gift</Link>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="py-16 max-w-2xl">
-        <h1 className="text-4xl font-bold mb-4">Stop Gifting Crap They Don’t Want</h1>
-        <p className="text-lg text-muted-foreground mb-6">
-          Ask what makes them happy (without revealing yourself). Give better gifts, faster. 🎁
-        </p>
-        <Link href="/create">
-          <button className="bg-black text-white px-6 py-2 rounded-full">Create a Gift</button>
-        </Link>
-      </section>
+      <Hero />
 
       {/* How It Works */}
       <section id="how" className="py-12 max-w-3xl">
