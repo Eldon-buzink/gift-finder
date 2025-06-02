@@ -1,102 +1,104 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Card } from "@/components/ui/card";
 
-export default function Home() {
+export default function LandingPage() {
+  const usps = [
+    {
+      emoji: "\uD83C\uDFAF",
+      title: "No more guessing games",
+      text: "Stop stressing about what they *might* like. Just ask (without them knowing it’s you) and get them something they’ll actually love.",
+    },
+    {
+      emoji: "⏱️",
+      title: "Save hours of scrolling",
+      text: "No more doom-shopping or 14-tab gift searches. Send one message and let them tell you what they want.",
+    },
+    {
+      emoji: "😊",
+      title: "Give joy, not just gifts",
+      text: "Figure out what really makes someone happy — with zero awkward convos or group chats.",
+    },
+  ];
+
+  const faqs = [
+    {
+      question: "Is it really anonymous?",
+      answer: "Yep. They won't know it's you unless you tell them."
+    },
+    {
+      question: "Do I need to install anything?",
+      answer: "Nope. It's all web-based and mobile-friendly."
+    },
+    {
+      question: "Can I send it via WhatsApp?",
+      answer: "Absolutely. Choose email or WhatsApp when you send it."
+    }
+  ];
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col items-center text-center px-4">
+      {/* Navigation */}
+      <nav className="w-full max-w-6xl py-4 flex justify-between items-center text-sm">
+        <div className="font-bold text-lg">GiftThing</div>
+        <div className="space-x-4 hidden sm:block">
+          <Link href="#how">How it works</Link>
+          <Link href="#faq">FAQ</Link>
+          <Link href="/login">Login</Link>
+          <Link href="/create">Create a Gift</Link>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </nav>
+
+      {/* Hero */}
+      <section className="py-16 max-w-2xl">
+        <h1 className="text-4xl font-bold mb-4">Stop Gifting Crap They Don’t Want</h1>
+        <p className="text-lg text-muted-foreground mb-6">
+          Ask what makes them happy (without revealing yourself). Give better gifts, faster. 🎁
+        </p>
+        <Link href="/create">
+          <button className="bg-black text-white px-6 py-2 rounded-full">Create a Gift</button>
+        </Link>
+      </section>
+
+      {/* How It Works */}
+      <section id="how" className="py-12 max-w-3xl">
+        <h2 className="text-2xl font-bold mb-6">How it works</h2>
+        <ol className="space-y-4 text-left">
+          <li><strong>1.</strong> You choose the reason and send a message anonymously.</li>
+          <li><strong>2.</strong> They fill in what makes them happy.</li>
+          <li><strong>3.</strong> You get their answer + smart gift ideas.</li>
+        </ol>
+      </section>
+
+      {/* USPs */}
+      <section className="py-12 px-4 max-w-6xl">
+        <h2 className="text-2xl font-bold text-center mb-8">Why use this tool?</h2>
+        <div className="grid gap-6 md:grid-cols-3">
+          {usps.map(({ emoji, title, text }, i) => (
+            <Card key={i} className="p-4 flex flex-col items-start bg-white/60 shadow-xl rounded-2xl">
+              <div className="text-3xl mb-2">{emoji}</div>
+              <h3 className="text-lg font-semibold mb-1">{title}</h3>
+              <p className="text-sm text-muted-foreground">{text}</p>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="py-12 max-w-3xl">
+        <h2 className="text-2xl font-bold mb-6">FAQ</h2>
+        <div className="space-y-4 text-left">
+          {faqs.map((faq, i) => (
+            <div key={i}>
+              <p className="font-semibold">{faq.question}</p>
+              <p className="text-sm text-muted-foreground">{faq.answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-6 text-sm text-muted-foreground">
+        © {new Date().getFullYear()} GiftThing. Made with ❤️ & sarcasm.
       </footer>
     </div>
   );
