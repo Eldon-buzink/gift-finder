@@ -32,7 +32,13 @@ export const GIFS = {
   ],
 } as const;
 
-export const OCCASIONS = [
+export type Occasion = {
+    label: string;
+    value: string;
+    emoji?: string;
+  };
+
+  export const OCCASIONS: Occasion[] = [
   { label: 'Birthday', value: 'Birthday', emoji: '🎉' },
   { label: 'New Job', value: 'New Job', emoji: '💼' },
   { label: 'Housewarming', value: 'Housewarming', emoji: '🏡' },
