@@ -8,12 +8,16 @@ import confetti from 'canvas-confetti';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { PreviewCard } from '@/components/ui/PreviewCard';
 import { useGiftBuilder } from '@/context/GiftBuilderContext';
-import { OCCASIONS } from '@/lib/constants';
+import { OCCASIONS, OccasionItem } from '@/lib/constants';
+
+interface FormData {
+  occasion: string;
+}
 
 export default function StartGiftFlow() {
   const router = useRouter();
   const { data, setData } = useGiftBuilder();
-  const [customLabel, setCustomLabel] = useState('');
+  const [customLabel, setCustomLabel] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
   const handleSelect = (value: string) => {
@@ -73,7 +77,7 @@ export default function StartGiftFlow() {
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-md w-full mb-6">
-            {OCCASIONS.map((item) => (
+            {OCCASIONS.map((item: OccasionItem) => (
               <motion.button
                 key={item.value}
                 onClick={() => handleSelect(item.value)}
@@ -145,7 +149,7 @@ export default function StartGiftFlow() {
                     onClick={handleCustomSubmit}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full 
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full
                              font-semibold shadow-lg transition hover:shadow-xl"
                   >
                     Next
