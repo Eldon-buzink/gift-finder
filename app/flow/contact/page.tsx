@@ -7,15 +7,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { PreviewCard } from '@/components/ui/PreviewCard';
 
+interface ContactData {
+  occasion: string;
+  name: string;
+  background: string;
+  gif: string;
+}
+
+type ContactMethod = 'email' | 'whatsapp' | '';
+
 export default function ContactStep() {
   const router = useRouter();
   const { data } = useGiftBuilder();
-  const [contactMethod, setContactMethod] = useState<'email' | 'whatsapp' | ''>('');
-  const [recipient, setRecipient] = useState('');
+  const [contactMethod, setContactMethod] = useState<ContactMethod>('');
+  const [recipient, setRecipient] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!data.occasion || !data.name || !data.background || !data.gif) {
+    const typedData = data as ContactData;
+    if (!typedData.occasion || !typedData.name || !typedData.background || !typedData.gif) {
       router.push('/flow/start');
     }
   }, [data, router]);

@@ -6,14 +6,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { PreviewCard } from '@/components/ui/PreviewCard';
 import { useGiftBuilder } from '@/context/GiftBuilderContext';
-import { BACKGROUNDS, GIFS } from '@/lib/constants';
+import { BACKGROUNDS, GIFS, Background, GifItem } from '@/lib/constants';
+
+interface StyleData {
+  occasion: string;
+  name: string;
+  background?: string;
+  gif?: string;
+}
 
 export default function StyleStep() {
   const router = useRouter();
   const { data, setData } = useGiftBuilder();
-  const { occasion, name } = data;
+  const { occasion, name } = data as StyleData;
 
-  const gifs = GIFS[occasion as keyof typeof GIFS] || GIFS['Birthday'];
+  const gifs: GifItem[] = GIFS[occasion as keyof typeof GIFS] || GIFS['Birthday'];
 
   useEffect(() => {
     if (!occasion || !name) router.push('/flow/name');
