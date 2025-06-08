@@ -5,6 +5,19 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    'bg-gradient-to-r',
+    'bg-gradient-to-br',
+    'from-pink-300',
+    'from-purple-400',
+    'from-blue-300',
+    'via-yellow-300',
+    'via-pink-400',
+    'via-indigo-400',
+    'to-orange-300',
+    'to-red-400',
+    'to-purple-400'
+  ],
   theme: {
     extend: {
       fontFamily: {

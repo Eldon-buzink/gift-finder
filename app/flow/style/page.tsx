@@ -72,7 +72,8 @@ export default function StyleStep() {
                   onClick={() => setData({ background: bg.value })}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`h-20 rounded-lg shadow-lg transition-all duration-200 ${bg.color} 
+                  className={`h-20 rounded-lg shadow-lg transition-all duration-200 overflow-hidden
+                             ${bg.color} 
                              ${data.background === bg.value ? 'ring-4 ring-black' : 'hover:ring-2 hover:ring-black/50'}`}
                 >
                   <span className="sr-only">{bg.name}</span>

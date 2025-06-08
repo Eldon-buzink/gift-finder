@@ -18,7 +18,7 @@ const PreviewCard = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           className={`w-full max-w-md mx-auto mt-16 mb-8 p-6 rounded-xl shadow-xl 
-                     ${background ? BACKGROUNDS.find(bg => bg.value === background)?.color : 'bg-white'}`}
+                     ${background && BACKGROUNDS.find(bg => bg.value === background)?.color}`}
         >
           <div className="relative">
             {gif && (
