@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import confetti from 'canvas-confetti';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { PreviewCard } from '@/components/ui/PreviewCard';
+import PreviewCard from '@/components/ui/PreviewCard';
 import { useGiftBuilder } from '@/context/GiftBuilderContext';
 import { OCCASIONS, OccasionItem } from '@/lib/constants';
 

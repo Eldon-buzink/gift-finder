@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { PreviewCard } from '@/components/ui/PreviewCard';
+import PreviewCard from '@/components/ui/PreviewCard';
 import { useGiftBuilder } from '@/context/GiftBuilderContext';
 
 const FUNNY_PLACEHOLDERS = [

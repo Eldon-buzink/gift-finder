@@ -3,27 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --foreground: rgb(0, 0, 0);
-  --background: linear-gradient(
-    to bottom,
-    rgb(255, 255, 255),
-    rgb(249, 250, 251)
-  );
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground: rgb(255, 255, 255);
-    --background: linear-gradient(
-      to bottom,
-      rgb(10, 10, 10),
-      rgb(0, 0, 0)
-    );
-  }
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: #ffffff;
+  color: #000000;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Ensure inputs and other form elements stay in light mode */
+input, textarea, select {
+  color-scheme: light;
+  background-color: #ffffff;
+  color: #000000;
 }

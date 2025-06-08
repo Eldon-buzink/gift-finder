@@ -15,13 +15,13 @@ export function Hero() {
   };
 
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section className="relative py-20 overflow-hidden bg-white">
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 animate-gradient bg-400 opacity-20" />
       <div className="relative max-w-2xl mx-auto px-4 text-center">
         <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
           Stop Gifting Crap They Don't Want
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+        <p className="text-xl text-gray-600 mb-8">
           Ask what makes them happy (without revealing yourself). Give better gifts, faster. 🎁
         </p>
         <Link href="/login">

@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { PreviewCard } from '@/components/ui/PreviewCard';
+import PreviewCard from '@/components/ui/PreviewCard';
+import { supabase } from '@/lib/supabase';
 
 interface ContactData {
   occasion: string;
@@ -16,12 +17,55 @@ interface ContactData {
 
 type ContactMethod = 'email' | 'whatsapp' | '';
 
+const relationshipMap: Record<string, string> = {
+  'New Job': 'colleagues',
+  'New Home': 'friends and family',
+  'Birthday': 'loved ones',
+  'Graduation': 'friends',
+  'Wedding': 'loved ones',
+  'Anniversary': 'loved ones',
+  'Baby Shower': 'friends and family',
+  'Christmas': 'loved ones',
+  'Housewarming': 'friends and family',
+  'Thank You': 'people who appreciate you',
+  'Get Well Soon': 'people who care about you',
+  'Other': 'people who care about you'
+};
+
+const generateEmailContent = (data: ContactData) => {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #333; text-align: center;">Hey! Someone wants to get you a gift! 🎁</h1>
+      
+      <p style="color: #666; text-align: center; font-size: 16px;">
+        For ${data.occasion}, a secret gift ninja wants to make sure you get something you'll love.
+      </p>
+      
+      <div style="background-color: #f8f8f8; border-radius: 10px; padding: 20px; margin: 20px 0;">
+        <p style="color: #333; text-align: center; font-size: 18px;">
+          <strong>${data.name}</strong>, what would make you happy? 😊
+        </p>
+      </div>
+      
+      <p style="color: #666; text-align: center; font-size: 14px;">
+        Just reply to this email with your wishes. Don't worry about being too specific or general.
+        Your gift ninja will figure it out! 🥷
+      </p>
+      
+      <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
+        Sent anonymously via Gift Ninja 🎁
+      </div>
+    </div>
+  `;
+};
+
 export default function ContactStep() {
   const router = useRouter();
   const { data } = useGiftBuilder();
   const [contactMethod, setContactMethod] = useState<ContactMethod>('');
   const [recipient, setRecipient] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const typedData = data as ContactData;
@@ -30,17 +74,146 @@ export default function ContactStep() {
     }
   }, [data, router]);
 
-  const handleSubmit = () => {
-    if (!recipient) {
-      setError('Please enter a recipient');
-      return;
+  const sendGiftEmail = async () => {
+    const typedData = data as ContactData;
+    const relationshipContext = relationshipMap[typedData.occasion] || 'people who care about you';
+
+    try {
+      if (!recipient || !typedData.name || !typedData.occasion || !typedData.gif) {
+        console.error('Missing required data:', { recipient, ...typedData });
+        throw new Error('Missing required data for email creation');
+      }
+
+      const htmlContent = `
+        <div style="font-family: sans-serif; max-width: 500px; margin: auto; text-align: center; color: #333;">
+          <h2>${typedData.occasion}</h2>
+          <p style="font-size: 16px;">
+            Your ${relationshipContext} wanted to surprise you with a little something. 🎁
+          </p>
+          <p style="margin: 20px 0; font-size: 14px; color: #555;">
+            Someone sent you a message — open your card to read it and tell us what would make you smile.
+          </p>
+          <img src="${typedData.gif}" alt="Gift animation" style="max-width: 100%; border-radius: 8px; margin: 20px 0;" />
+          <div style="margin: 20px 0;">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/reply?id=" style="display: inline-block; padding: 12px 20px; background-color: #4f46e5; color: white; text-decoration: none; border-radius: 6px;">
+              🎁 Open your card
+            </a>
+          </div>
+        </div>
+      `;
+
+      const insertData = {
+        recipient_email: recipient,
+        recipient_name: '',  // This will be filled in when they reply
+        message_subject: `Someone sent you a card! 🎉`,
+        message_html: htmlContent,
+        status: 'pending',
+        opened: false,
+        replied: false,
+        reply_message: null,
+        resend_id: null,
+        occasion: typedData.occasion,
+        gif_url: typedData.gif,
+        background: typedData.background
+      };
+
+      console.log('Attempting to insert record with data:', insertData);
+
+      // Now attempt the insert
+      const insertResult = await supabase
+        .from('emails')
+        .insert(insertData)
+        .select()
+        .single();
+
+      console.log('Insert result:', insertResult);
+
+      if (insertResult.error) {
+        console.error('Detailed insert error:', {
+          error: insertResult.error,
+          code: insertResult.error.code,
+          message: insertResult.error.message,
+          details: insertResult.error.details
+        });
+        throw new Error(`Failed to create card: ${insertResult.error.message || 'Unknown database error'}`);
+      }
+
+      if (!insertResult.data) {
+        console.error('No data returned from insert');
+        throw new Error('Failed to create card: No data returned');
+      }
+
+      console.log('Successfully inserted record:', insertResult.data);
+
+      // Update the reply URL with the actual card ID
+      const cardId = insertResult.data.id;
+      const finalHtmlContent = htmlContent.replace('reply?id=', `reply?id=${cardId}`);
+
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: recipient,
+          subject: `Someone sent you a card! 🎉`,
+          htmlContent: finalHtmlContent,
+          senderName: typedData.name,
+          occasion: typedData.occasion,
+          recipientName: ''  // Initialize as empty, will be filled when they reply
+        }),
+      });
+
+      let responseData;
+      try {
+        const textResponse = await response.text();
+        console.log('Raw API response:', textResponse);
+        
+        try {
+          responseData = JSON.parse(textResponse);
+          console.log('Parsed API response:', responseData);
+        } catch (parseError) {
+          console.error('Failed to parse API response:', parseError);
+          throw new Error(`Invalid API response: ${textResponse.substring(0, 100)}...`);
+        }
+      } catch (responseError) {
+        console.error('Error reading API response:', responseError);
+        throw new Error('Failed to read API response');
+      }
+
+      if (!response.ok || !responseData.success) {
+        console.error('API Error:', responseData);
+        const errorMessage = responseData?.error || 
+                           responseData?.details?.message || 
+                           `API error: ${response.status} ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
+
+      console.log('Email sent successfully:', responseData);
+      router.push('/success');
+      return true;
+    } catch (error) {
+      console.error('Full error details:', error);
+      throw error; // Re-throw to be handled by handleSubmit
     }
-    if (!contactMethod) {
-      setError('Please select a contact method');
-      return;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsSending(true);
+
+    try {
+      if (!contactMethod || !recipient) {
+        setError('Please fill in all fields');
+        return;
+      }
+
+      await sendGiftEmail();
+    } catch (error) {
+      console.error('Submit error:', error);
+      setError(error instanceof Error ? error.message : 'An unexpected error occurred');
+    } finally {
+      setIsSending(false);
     }
-    // send logic here...
-    alert(`Sending message to ${recipient} via ${contactMethod}`);
   };
 
   return (
@@ -159,13 +332,13 @@ export default function ContactStep() {
 
             <motion.button
               onClick={handleSubmit}
-              disabled={!recipient || !contactMethod}
+              disabled={!recipient || !contactMethod || isSending}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-full 
                        font-semibold disabled:opacity-50 shadow-lg transition hover:shadow-xl"
             >
-              Send it 💌
+              {isSending ? 'Sending... 🚀' : 'Send it 💌'}
             </motion.button>
           </div>
         </div>

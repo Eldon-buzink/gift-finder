@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { PreviewCard } from '@/components/ui/PreviewCard';
+import PreviewCard from '@/components/ui/PreviewCard';
 import { useGiftBuilder } from '@/context/GiftBuilderContext';
 import { BACKGROUNDS, GIFS, Background, GifItem } from '@/lib/constants';
 
