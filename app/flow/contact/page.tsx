@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import PreviewCard from '@/components/ui/PreviewCard';
 import { supabase } from '@/lib/supabase';
+import { generateGiftEmail } from '@/lib/email/generateGiftEmail';
 
 interface ContactData {
   occasion: string;
@@ -32,33 +33,6 @@ const relationshipMap: Record<string, string> = {
   'Other': 'people who care about you'
 };
 
-const generateEmailContent = (data: ContactData) => {
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h1 style="color: #333; text-align: center;">Hey! Someone wants to get you a gift! 🎁</h1>
-      
-      <p style="color: #666; text-align: center; font-size: 16px;">
-        For ${data.occasion}, a secret gift ninja wants to make sure you get something you'll love.
-      </p>
-      
-      <div style="background-color: #f8f8f8; border-radius: 10px; padding: 20px; margin: 20px 0;">
-        <p style="color: #333; text-align: center; font-size: 18px;">
-          <strong>${data.name}</strong>, what would make you happy? 😊
-        </p>
-      </div>
-      
-      <p style="color: #666; text-align: center; font-size: 14px;">
-        Just reply to this email with your wishes. Don't worry about being too specific or general.
-        Your gift ninja will figure it out! 🥷
-      </p>
-      
-      <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-        Sent anonymously via Gift Ninja 🎁
-      </div>
-    </div>
-  `;
-};
-
 export default function ContactStep() {
   const router = useRouter();
   const { data } = useGiftBuilder();
@@ -76,7 +50,6 @@ export default function ContactStep() {
 
   const sendGiftEmail = async () => {
     const typedData = data as ContactData;
-    const relationshipContext = relationshipMap[typedData.occasion] || 'people who care about you';
 
     try {
       if (!recipient || !typedData.name || !typedData.occasion || !typedData.gif) {
@@ -84,29 +57,20 @@ export default function ContactStep() {
         throw new Error('Missing required data for email creation');
       }
 
-      const htmlContent = `
-        <div style="font-family: sans-serif; max-width: 500px; margin: auto; text-align: center; color: #333;">
-          <h2>${typedData.occasion}</h2>
-          <p style="font-size: 16px;">
-            Your ${relationshipContext} wanted to surprise you with a little something. 🎁
-          </p>
-          <p style="margin: 20px 0; font-size: 14px; color: #555;">
-            Someone sent you a message — open your card to read it and tell us what would make you smile.
-          </p>
-          <img src="${typedData.gif}" alt="Gift animation" style="max-width: 100%; border-radius: 8px; margin: 20px 0;" />
-          <div style="margin: 20px 0;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL}/reply?id=" style="display: inline-block; padding: 12px 20px; background-color: #4f46e5; color: white; text-decoration: none; border-radius: 6px;">
-              🎁 Open your card
-            </a>
-          </div>
-        </div>
-      `;
+      // Generate the initial email content without the card ID
+      const emailContent = generateGiftEmail({
+        receiver_name: typedData.name,
+        occasion: typedData.occasion,
+        gif: typedData.gif,
+        background: typedData.background
+      });
 
       const insertData = {
         recipient_email: recipient,
-        recipient_name: '',  // This will be filled in when they reply
-        message_subject: `Someone sent you a card! 🎉`,
-        message_html: htmlContent,
+        recipient_name: '',  // Will be filled in later
+        receiver_name: typedData.name,
+        message_subject: `Hey ${typedData.name}! Someone wants to get you something for your ${typedData.occasion.toLowerCase()} 🎁`,
+        message_html: emailContent,
         status: 'pending',
         opened: false,
         replied: false,
@@ -119,7 +83,6 @@ export default function ContactStep() {
 
       console.log('Attempting to insert record with data:', insertData);
 
-      // Now attempt the insert
       const insertResult = await supabase
         .from('emails')
         .insert(insertData)
@@ -145,17 +108,32 @@ export default function ContactStep() {
 
       console.log('Successfully inserted record:', insertResult.data);
 
-      // Update the reply URL with the actual card ID
+      // Update the email content with the actual card ID
       const cardId = insertResult.data.id;
-      const finalHtmlContent = htmlContent.replace('reply?id=', `reply?id=${cardId}`);
+      const finalEmailContent = emailContent.replace(
+        'Just reply to this email with your wishes.',
+        `<div style="margin: 20px 0;">
+          <a href="${process.env.NEXT_PUBLIC_APP_URL}/reply?id=${cardId}" 
+             style="display: inline-block; padding: 12px 24px; 
+                    background: linear-gradient(to right, #9333ea, #db2777); 
+                    color: white; text-decoration: none; 
+                    border-radius: 9999px; font-weight: 600;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            🎁 Open your card
+          </a>
+        </div>
+        <p style="color: #666666; font-size: 14px; margin-top: 16px;">
+          Click the button above to share what would make you happy!
+        </p>`
+      );
 
       const response = await fetch('/api/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: recipient,
-          subject: `Someone sent you a card! 🎉`,
-          htmlContent: finalHtmlContent,
+          subject: `Hey ${typedData.name}! Someone wants to get you something for your ${typedData.occasion.toLowerCase()} 🎁`,
+          htmlContent: finalEmailContent,
           senderName: typedData.name,
           occasion: typedData.occasion,
           recipientName: ''  // Initialize as empty, will be filled when they reply
