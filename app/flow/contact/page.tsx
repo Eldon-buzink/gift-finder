@@ -9,6 +9,13 @@ import PreviewCard from '@/components/ui/PreviewCard';
 import { supabase } from '@/lib/supabase';
 import { generateGiftEmail } from '@/lib/email/generateGiftEmail';
 
+// Helper function for development logging
+const devLog = (...args: any[]) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(...args);
+  }
+};
+
 interface ContactData {
   occasion: string;
   name: string;
@@ -81,7 +88,7 @@ export default function ContactStep() {
         background: typedData.background
       };
 
-      console.log('Attempting to insert record with data:', insertData);
+      devLog('Attempting to insert record with data:', insertData);
 
       const insertResult = await supabase
         .from('emails')
@@ -89,7 +96,7 @@ export default function ContactStep() {
         .select()
         .single();
 
-      console.log('Insert result:', insertResult);
+      devLog('Insert result:', insertResult);
 
       if (insertResult.error) {
         console.error('Detailed insert error:', {
@@ -106,7 +113,7 @@ export default function ContactStep() {
         throw new Error('Failed to create card: No data returned');
       }
 
-      console.log('Successfully inserted record:', insertResult.data);
+      devLog('Successfully inserted record:', insertResult.data);
 
       // Update the email content with the actual card ID
       const cardId = insertResult.data.id;
@@ -143,11 +150,11 @@ export default function ContactStep() {
       let responseData;
       try {
         const textResponse = await response.text();
-        console.log('Raw API response:', textResponse);
+        devLog('Raw API response:', textResponse);
         
         try {
           responseData = JSON.parse(textResponse);
-          console.log('Parsed API response:', responseData);
+          devLog('Parsed API response:', responseData);
         } catch (parseError) {
           console.error('Failed to parse API response:', parseError);
           throw new Error(`Invalid API response: ${textResponse.substring(0, 100)}...`);
@@ -165,7 +172,7 @@ export default function ContactStep() {
         throw new Error(errorMessage);
       }
 
-      console.log('Email sent successfully:', responseData);
+      devLog('Email sent successfully:', responseData);
       router.push('/success');
       return true;
     } catch (error) {

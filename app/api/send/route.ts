@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { supabase } from '@/lib/supabase';
 
+// Helper function for development logging
+const devLog = (...args: any[]) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(...args);
+  }
+};
+
 // Initialize Resend with error handling
 let resend: Resend;
 try {
@@ -28,7 +35,7 @@ export async function POST(request: Request) {
     let body;
     try {
       body = await request.json();
-      console.log('Received API request with body:', body);
+      devLog('Received API request with body:', body);
     } catch (parseError) {
       console.error('Failed to parse request body:', parseError);
       return NextResponse.json(
@@ -39,7 +46,7 @@ export async function POST(request: Request) {
 
     const { to, subject, htmlContent, senderName, occasion, recipientName } = body;
 
-    console.log('Parsed request data:', {
+    devLog('Parsed request data:', {
       to,
       subject,
       senderName,
@@ -58,7 +65,7 @@ export async function POST(request: Request) {
 
     try {
       // Send email
-      console.log('Attempting to send email to:', to);
+      devLog('Attempting to send email to:', to);
       const emailResult = await resend.emails.send({
         from: 'Gift Ninja <onboarding@resend.dev>',
         to: [to],
@@ -66,7 +73,7 @@ export async function POST(request: Request) {
         html: htmlContent,
       });
 
-      console.log('Resend API response:', emailResult);
+      devLog('Resend API response:', emailResult);
 
       if (!emailResult.data?.id) {
         console.error('Failed to send email:', emailResult);
@@ -81,7 +88,7 @@ export async function POST(request: Request) {
       }
 
       // First find the record by email
-      console.log('Looking up email record for:', to);
+      devLog('Looking up email record for:', to);
       const { data: emailRecord, error: findError } = await supabase
         .from('emails')
         .select('*')
@@ -120,11 +127,11 @@ export async function POST(request: Request) {
       };
 
       if (recipientName) {
-        console.log('Updating recipient name to:', recipientName);
+        devLog('Updating recipient name to:', recipientName);
         updatePayload.recipient_name = recipientName;
       }
 
-      console.log('Updating Supabase record with:', updatePayload);
+      devLog('Updating Supabase record with:', updatePayload);
       const { data: updatedRecord, error: updateError } = await supabase
         .from('emails')
         .update(updatePayload)
@@ -144,7 +151,7 @@ export async function POST(request: Request) {
         );
       }
 
-      console.log('Email record updated successfully:', updatedRecord);
+      devLog('Email record updated successfully:', updatedRecord);
       return NextResponse.json({ 
         success: true, 
         data: {

@@ -5,11 +5,19 @@ import { useSearchParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import Image from 'next/image';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { BACKGROUNDS, Background } from '@/lib/constants';
+import { motion } from 'framer-motion';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
+
+const devLog = (...args: any[]) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log(...args);
+  }
+};
 
 const occasionSuggestions: Record<string, string[]> = {
   'Birthday': [
@@ -131,6 +139,7 @@ interface CardData {
   occasion: string;
   gif_url: string;
   background: string;
+  receiver_name: string | null;
 }
 
 function ReplyPageContent() {
@@ -143,7 +152,6 @@ function ReplyPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [currentSuggestion, setCurrentSuggestion] = useState(0);
-  const [recipientName, setRecipientName] = useState('');
 
   // Extract GIF URL from HTML content
   const getGifUrl = (html: string) => {
@@ -206,23 +214,20 @@ function ReplyPageContent() {
 
   // Get the appropriate suggestions based on the message content
   const getSuggestions = () => {
-    if (!card?.message_html) return defaultSuggestions;
-    // Extract occasion from message HTML
-    const occasionMatch = card.message_html.match(/<h2>(.*?)<\/h2>/);
-    const occasion = occasionMatch ? occasionMatch[1] : null;
-    return occasionSuggestions[occasion || ''] || defaultSuggestions;
+    if (!card?.occasion) return defaultSuggestions;
+    return occasionSuggestions[card.occasion] || defaultSuggestions;
   };
 
-  // Rotate through suggestions
+  // Rotate through suggestions as placeholder text
   useEffect(() => {
     if (reply) return; // Don't rotate if user has typed something
     
     const interval = setInterval(() => {
       setCurrentSuggestion((prev) => (prev + 1) % getSuggestions().length);
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [reply]);
+  }, [reply, card?.occasion]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -230,18 +235,14 @@ function ReplyPageContent() {
     setIsLoading(true);
 
     try {
-      if (!id || !reply.trim() || !recipientName.trim()) {
-        setError('Please fill in both your name and reply.');
+      if (!id || !reply.trim() || !card?.receiver_name) {
+        setError('Please share what would make you happy.');
         return;
       }
 
-      const name = recipientName.trim();
-      console.log('Starting submission with name:', name);
-
-      // First update the email record with the reply and recipient name
-      console.log('Updating Supabase with:', {
+      // First update the email record with the reply
+      devLog('Updating Supabase with:', {
         id,
-        name,
         reply: reply.trim(),
       });
 
@@ -250,7 +251,6 @@ function ReplyPageContent() {
         .update({
           replied: true,
           reply_message: reply.trim(),
-          recipient_name: name
         })
         .eq('id', id)
         .select('*')
@@ -266,23 +266,105 @@ function ReplyPageContent() {
         throw new Error('Failed to update record');
       }
 
-      console.log('Supabase update successful:', {
+      devLog('Supabase update successful:', {
         id: updatedData.id,
-        recipient_name: updatedData.recipient_name,
         replied: updatedData.replied
       });
 
       // Now send a notification email about the reply
+      const notificationHtml = `
+        <div style="
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 32px 24px;
+          background-color: white;
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        ">
+          <h1 style="
+            color: #000000;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 24px;
+            font-weight: 700;
+          ">
+            🎉 ${card.receiver_name} replied to your gift card!
+          </h1>
+
+          ${card.gif_url ? `
+            <div style="
+              width: 200px;
+              height: 200px;
+              margin: 0 auto 24px auto;
+              border-radius: 12px;
+              overflow: hidden;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            ">
+              <img 
+                src="${card.gif_url}" 
+                alt="Gift animation" 
+                style="
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                "
+              />
+            </div>
+          ` : ''}
+
+          <div style="
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background-color: #f5f5f5;
+            border-radius: 12px;
+          ">
+            <p style="
+              color: #666666;
+              font-size: 16px;
+              line-height: 1.5;
+              margin-bottom: 16px;
+            ">
+              For ${updatedData.occasion}, they said:
+            </p>
+
+            <p style="
+              color: #000000;
+              font-size: 18px;
+              line-height: 1.6;
+              font-weight: 500;
+            ">
+              "${reply.trim()}"
+            </p>
+          </div>
+
+          <div style="
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid #eaeaea;
+          ">
+            <p style="
+              color: #999999;
+              font-size: 14px;
+              margin: 0;
+            ">
+              Time to go gift hunting! 🎁
+            </p>
+          </div>
+        </div>
+      `;
+
       const emailPayload = {
         to: updatedData.recipient_email,
-        subject: 'Your gift card has been replied to! 🎉',
-        htmlContent: `<div>Reply received: ${reply.trim()}</div>`,
-        senderName: name,
+        subject: `${card.receiver_name} replied to your gift card! 🎉`,
+        htmlContent: notificationHtml,
+        senderName: card.receiver_name,
         occasion: updatedData.occasion,
-        recipientName: name
+        recipientName: card.receiver_name
       };
 
-      console.log('Sending notification email with payload:', emailPayload);
+      devLog('Sending notification email with payload:', emailPayload);
 
       const response = await fetch('/api/send', {
         method: 'POST',
@@ -293,11 +375,11 @@ function ReplyPageContent() {
       let responseData;
       try {
         const textResponse = await response.text();
-        console.log('Raw API response:', textResponse);
+        devLog('Raw API response:', textResponse);
         
         try {
           responseData = JSON.parse(textResponse);
-          console.log('Parsed API response:', responseData);
+          devLog('Parsed API response:', responseData);
         } catch (parseError) {
           console.error('Failed to parse API response:', parseError);
           throw new Error(`Invalid API response: ${textResponse.substring(0, 100)}...`);
@@ -317,7 +399,7 @@ function ReplyPageContent() {
         throw new Error(responseData.error || 'Failed to send email');
       }
 
-      console.log('Email sent successfully:', responseData);
+      devLog('Email sent successfully:', responseData);
       setCard(prevCard => prevCard ? { ...prevCard, ...updatedData } : null);
       setSubmitted(true);
     } catch (error) {
@@ -330,25 +412,20 @@ function ReplyPageContent() {
 
   // Extract occasion from message HTML for display
   const getOccasionText = () => {
-    if (!card?.message_html) return '';
+    if (!card?.occasion) return '';
     
-    const occasionMatch = card.message_html.match(/<h2>(.*?)<\/h2>/);
-    if (!occasionMatch) return '';
-    
-    const occasion = occasionMatch[1];
-    
-    if (occasion === 'Thank You') {
+    if (card.occasion === 'Thank You') {
       return (
-        <p className="text-[22px]">
-          Someone wants to <span className="text-[#E91E63]">thank you</span>!
+        <p className="text-2xl font-bold text-black">
+          Someone wants to <span className="text-pink-600">thank you</span>!
         </p>
       );
     }
 
     return (
-      <p className="text-[22px]">
+      <p className="text-2xl font-bold text-black">
         What do you want for your{' '}
-        <span className="text-[#E91E63]">{occasion}</span>?
+        <span className="text-pink-600">{card.occasion}</span>?
       </p>
     );
   };
@@ -391,7 +468,7 @@ function ReplyPageContent() {
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="max-w-xl mx-auto p-6 text-center">
           <h2 className="text-3xl font-bold mb-4 text-gray-800">
-            🎉 Thanks {recipientName}!
+            🎉 Thanks {card?.receiver_name}!
           </h2>
           <p className="text-gray-600">Your gift ninja will make sure you get something you'll love.</p>
         </div>
@@ -400,7 +477,7 @@ function ReplyPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-white">
       {error ? (
         <div className="min-h-screen flex items-center justify-center">
           <div className="max-w-xl mx-auto p-6 text-center">
@@ -413,96 +490,61 @@ function ReplyPageContent() {
           <LoadingSpinner />
         </div>
       ) : (
-        <div className="max-w-2xl mx-auto p-6">
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <h1 className="text-[32px] font-semibold">
-                  Hey{recipientName ? ` ${recipientName}` : ''}!
-                </h1>
-                <span className="text-[32px]">👋</span>
-              </div>
-              {getOccasionText()}
-            </div>
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
+          <div className="w-full max-w-2xl flex flex-col items-center">
+            <div className={`w-full max-w-md p-6 rounded-xl shadow-xl 
+                           ${card.background ? BACKGROUNDS.find((bg: Background) => bg.value === card.background)?.color : 'bg-white'}`}>
+              <div className="relative">
+                {card.gif_url && (
+                  <div className="absolute -top-16 right-0 w-24 h-24 rounded-lg overflow-hidden shadow-lg bg-white">
+                    <Image
+                      src={card.gif_url}
+                      alt="Gift animation"
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+                )}
 
-            {card.gif_url && (
-              <div className="relative w-full aspect-video rounded-[16px] overflow-hidden">
-                <Image
-                  src={card.gif_url}
-                  alt="Gift animation"
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
-            )}
-
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  First, what's your name?
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  value={recipientName}
-                  onChange={(e) => setRecipientName(e.target.value)}
-                  placeholder="Your name"
-                  className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-                  required
-                />
-              </div>
-
-              <div className="space-y-4">
-                <label htmlFor="reply" className="block text-sm font-medium text-gray-700">
-                  What would make you happy?
-                </label>
-                <textarea
-                  id="reply"
-                  value={reply}
-                  onChange={(e) => setReply(e.target.value)}
-                  placeholder="Tell us what you'd like..."
-                  className="w-full h-32 p-3 border border-gray-300 rounded-lg shadow-sm resize-none focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <p className="text-sm text-gray-500">Need inspiration? Try one of these:</p>
-                <div className="grid grid-cols-1 gap-2">
-                  {getSuggestions().map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setCurrentSuggestion(index);
-                        setReply(suggestion);
-                      }}
-                      className={`text-left p-3 rounded-lg transition-all ${
-                        currentSuggestion === index
-                          ? 'bg-black text-white'
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                      }`}
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
+                <div className="text-center">
+                  <p className="text-lg font-medium mb-2 text-black">
+                    Hey {card.receiver_name}! 👋
+                  </p>
+                  {getOccasionText()}
                 </div>
               </div>
 
-              <button
+              <div className="mt-8">
+                <textarea
+                  value={reply}
+                  onChange={(e) => setReply(e.target.value)}
+                  placeholder={getSuggestions()[currentSuggestion]}
+                  className="w-full p-4 rounded-lg border border-black/20 bg-white text-black resize-none focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+                  rows={2}
+                  required
+                />
+                <p className="text-sm text-black/60 text-center mt-2">
+                  Let your gift ninja know what makes you happy
+                </p>
+              </div>
+
+              <motion.button
                 onClick={handleSubmit}
-                disabled={isLoading || !recipientName.trim() || !reply.trim()}
-                className={`w-full py-3 px-4 rounded-lg font-medium transition-all ${
-                  isLoading || !recipientName.trim() || !reply.trim()
+                disabled={isLoading || !reply.trim()}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`w-full mt-6 py-3 px-4 rounded-full font-semibold transition-all ${
+                  isLoading || !reply.trim()
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-black text-white hover:bg-gray-900'
+                    : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg hover:shadow-xl'
                 }`}
               >
                 {isLoading ? 'Sending...' : 'Send Reply'}
-              </button>
+              </motion.button>
 
               {error && (
-                <p className="text-sm text-red-500 text-center">{error}</p>
+                <p className="text-sm text-red-500 text-center mt-4">{error}</p>
               )}
             </div>
           </div>
