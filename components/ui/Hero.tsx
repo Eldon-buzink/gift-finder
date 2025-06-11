@@ -24,7 +24,7 @@ export function Hero() {
         <p className="text-xl text-gray-600 mb-8">
           Ask what makes them happy (without revealing yourself). Give better gifts, faster. 🎁
         </p>
-        <Link href="/login">
+        <Link href="/flow/start">
           <button 
             onClick={handleConfetti}
             className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-full text-lg font-medium transition-all duration-300 transform hover:scale-105"

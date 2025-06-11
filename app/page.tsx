@@ -45,7 +45,7 @@ export default function LandingPage() {
           <Link href="#how" className="text-black hover:text-gray-800">How it works</Link>
           <Link href="#faq" className="text-black hover:text-gray-800">FAQ</Link>
           <Link href="/login" className="text-black hover:text-gray-800">Login</Link>
-          <Link href="/login" className="text-black hover:text-gray-800">Create a Gift</Link>
+          <Link href="/flow/start" className="text-black hover:text-gray-800">Create a Gift</Link>
         </div>
       </nav>
 

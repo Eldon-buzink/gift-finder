@@ -23,8 +23,6 @@ interface ContactData {
   gif: string;
 }
 
-type ContactMethod = 'email' | 'whatsapp' | '';
-
 const relationshipMap: Record<string, string> = {
   'New Job': 'colleagues',
   'New Home': 'friends and family',
@@ -43,7 +41,6 @@ const relationshipMap: Record<string, string> = {
 export default function ContactStep() {
   const router = useRouter();
   const { data } = useGiftBuilder();
-  const [contactMethod, setContactMethod] = useState<ContactMethod>('');
   const [recipient, setRecipient] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
@@ -187,8 +184,15 @@ export default function ContactStep() {
     setIsSending(true);
 
     try {
-      if (!contactMethod || !recipient) {
-        setError('Please fill in all fields');
+      if (!recipient) {
+        setError('Please enter their email address');
+        return;
+      }
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(recipient)) {
+        setError('Please enter a valid email address');
         return;
       }
 
@@ -255,43 +259,10 @@ export default function ContactStep() {
           </p>
 
           <div className="w-full max-w-md">
-            <h2 className="text-lg font-medium mb-3 text-black">Send via:</h2>
-            <div className="flex gap-4 mb-4">
-              <motion.button
-                onClick={() => {
-                  setContactMethod('email');
-                  setError(null);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex-1 px-4 py-3 rounded-xl font-medium shadow-md transition-all ${
-                  contactMethod === 'email' 
-                    ? 'bg-black text-white ring-2 ring-black' 
-                    : 'bg-white text-black border border-black/20 hover:shadow-lg'
-                }`}
-              >
-                Email
-              </motion.button>
-              <motion.button
-                onClick={() => {
-                  setContactMethod('whatsapp');
-                  setError(null);
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex-1 px-4 py-3 rounded-xl font-medium shadow-md transition-all ${
-                  contactMethod === 'whatsapp' 
-                    ? 'bg-black text-white ring-2 ring-black' 
-                    : 'bg-white text-black border border-black/20 hover:shadow-lg'
-                }`}
-              >
-                WhatsApp
-              </motion.button>
-            </div>
-
+            <h2 className="text-lg font-medium mb-3 text-black">Where should we send it?</h2>
             <input
-              type={contactMethod === 'email' ? 'email' : 'tel'}
-              placeholder={contactMethod === 'email' ? 'their@email.com' : '+31612345678'}
+              type="email"
+              placeholder="their@email.com"
               value={recipient}
               onChange={(e) => {
                 setRecipient(e.target.value);
@@ -317,7 +288,7 @@ export default function ContactStep() {
 
             <motion.button
               onClick={handleSubmit}
-              disabled={!recipient || !contactMethod || isSending}
+              disabled={!recipient || isSending}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-full 

@@ -31,6 +31,8 @@ export default function StartGiftFlow() {
       });
       setData({ occasion: value });
       router.push('/flow/name');
+    } else {
+      setData({ occasion: value });
     }
   };
 
