@@ -93,14 +93,9 @@ export default function StartGiftFlow() {
                     : 'bg-white/80 text-black/80'
                 )}
               >
-                <span className="whitespace-nowrap">
-                  {item.emoji ? (
-                    <>
-                      {item.label} {item.emoji}
-                    </>
-                  ) : (
-                    item.label
-                  )}
+                <span className="flex items-center justify-center gap-2 whitespace-nowrap">
+                  <span>{item.label}</span>
+                  {item.emoji && <span>{item.emoji}</span>}
                 </span>
               </motion.button>
             ))}
