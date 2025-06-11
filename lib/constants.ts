@@ -19,6 +19,9 @@ export const BACKGROUNDS: Background[] = [
   { name: 'Confetti Burst 🎊', value: 'confetti', color: 'bg-gradient-to-r from-yellow-300 via-pink-300 to-pink-400' },
   { name: 'Gradient Glow 🌈', value: 'gradient', color: 'bg-gradient-to-br from-blue-300 via-purple-300 to-pink-300' },
   { name: 'Pattern Play 🟣', value: 'pattern', color: 'bg-white border border-gray-300' },
+  { name: 'Birthday Vibes 🎂', value: 'birthday', color: 'bg-gradient-to-tr from-pink-200 via-purple-200 to-blue-200' },
+  { name: 'Success Path 💫', value: 'success', color: 'bg-gradient-to-r from-green-200 via-blue-200 to-purple-200' },
+  { name: 'Warm Welcome 🌅', value: 'warm', color: 'bg-gradient-to-br from-orange-200 via-yellow-200 to-pink-200' },
 ];
 
 export const GIFS: Record<string, GifItem[]> = {
