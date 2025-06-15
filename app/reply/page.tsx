@@ -271,100 +271,45 @@ function ReplyPageContent() {
         replied: updatedData.replied
       });
 
-      // Now send a notification email about the reply
-      const notificationHtml = `
-        <div style="
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-          max-width: 600px;
-          margin: 0 auto;
-          padding: 32px 24px;
-          background-color: white;
-          border-radius: 12px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        ">
-          <h1 style="
-            color: #000000;
-            font-size: 24px;
-            text-align: center;
-            margin-bottom: 24px;
-            font-weight: 700;
-          ">
-            🎉 ${card.receiver_name} replied to your gift card!
+      // Fetch sender_email and view_link_id from Supabase
+      const { data: freshData, error: fetchError } = await supabase
+        .from('emails')
+        .select('sender_email, view_link_id, receiver_name')
+        .eq('id', id)
+        .single();
+      if (fetchError || !freshData) {
+        throw new Error('Could not fetch sender email or view link');
+      }
+
+      const receiverName = freshData.receiver_name;
+      const viewUrl = `https://yourapp.com/view-reply/${freshData.view_link_id}`;
+      const replyHtml = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; background-color: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+          <h1 style="color: #000000; font-size: 24px; text-align: center; margin-bottom: 24px; font-weight: 700;">
+            ${receiverName} shared their gift wish!
           </h1>
-
-          ${card.gif_url ? `
-            <div style="
-              width: 200px;
-              height: 200px;
-              margin: 0 auto 24px auto;
-              border-radius: 12px;
-              overflow: hidden;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            ">
-              <img 
-                src="${card.gif_url}" 
-                alt="Gift animation" 
-                style="
-                  width: 100%;
-                  height: 100%;
-                  object-fit: cover;
-                "
-              />
-            </div>
-          ` : ''}
-
-          <div style="
-            text-align: center;
-            margin-bottom: 32px;
-            padding: 24px;
-            background-color: #f5f5f5;
-            border-radius: 12px;
-          ">
-            <p style="
-              color: #666666;
-              font-size: 16px;
-              line-height: 1.5;
-              margin-bottom: 16px;
-            ">
-              For ${updatedData.occasion}, they said:
+          <div style="text-align: center; margin-bottom: 32px; padding: 24px; background-color: #f5f5f5; border-radius: 12px;">
+            <p style="color: #000000; font-size: 18px; line-height: 1.6; font-weight: 500;">
+              ${receiverName} just told us what would make them happy. Curious? Click below to see their message and some gift suggestions 🎁👇
             </p>
-
-            <p style="
-              color: #000000;
-              font-size: 18px;
-              line-height: 1.6;
-              font-weight: 500;
-            ">
-              "${reply.trim()}"
-            </p>
+            <a href="${viewUrl}" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: linear-gradient(to right, #9333ea, #db2777); color: white; text-decoration: none; border-radius: 9999px; font-weight: 600; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">View their wish</a>
           </div>
-
-          <div style="
-            text-align: center;
-            padding-top: 24px;
-            border-top: 1px solid #eaeaea;
-          ">
-            <p style="
-              color: #999999;
-              font-size: 14px;
-              margin: 0;
-            ">
-              Time to go gift hunting! 🎁
-            </p>
+          <div style="text-align: center; padding-top: 24px; border-top: 1px solid #eaeaea;">
+            <p style="color: #999999; font-size: 14px; margin: 0;">Sent via Gift Ninja 🎁</p>
           </div>
         </div>
       `;
 
       const emailPayload = {
-        to: updatedData.recipient_email,
-        subject: `${card.receiver_name} replied to your gift card! 🎉`,
-        htmlContent: notificationHtml,
-        senderName: card.receiver_name,
+        to: freshData.sender_email,
+        subject: `${freshData.receiver_name} shared their gift wish!`,
+        htmlContent: replyHtml,
+        senderName: freshData.receiver_name,
         occasion: updatedData.occasion,
-        recipientName: card.receiver_name
+        recipientName: freshData.receiver_name
       };
 
-      devLog('Sending notification email with payload:', emailPayload);
+      devLog('Sending reply notification email with payload:', emailPayload);
 
       const response = await fetch('/api/send', {
         method: 'POST',

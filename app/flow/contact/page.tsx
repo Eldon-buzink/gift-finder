@@ -40,17 +40,20 @@ const relationshipMap: Record<string, string> = {
 
 export default function ContactStep() {
   const router = useRouter();
-  const { data } = useGiftBuilder();
+  const { data, setData } = useGiftBuilder();
   const [recipient, setRecipient] = useState<string>('');
+  const [senderEmail, setSenderEmail] = useState<string>(data.sender_email || '');
   const [error, setError] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const typedData = data as ContactData;
-    if (!typedData.occasion || !typedData.name || !typedData.background || !typedData.gif || !data.sender_email) {
+    if (!typedData.occasion || !typedData.name || !typedData.background || !typedData.gif) {
       router.push('/flow/start');
     }
   }, [data, router]);
+
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const sendGiftEmail = async () => {
     const typedData = data as ContactData;
@@ -73,6 +76,7 @@ export default function ContactStep() {
         recipient_email: recipient,
         recipient_name: '',  // Will be filled in later
         receiver_name: typedData.name,
+        sender_email: senderEmail,
         message_subject: `Hey ${typedData.name}! Someone wants to get you something for your ${typedData.occasion.toLowerCase()} 🎁`,
         message_html: emailContent,
         status: 'pending',
@@ -186,16 +190,25 @@ export default function ContactStep() {
     try {
       if (!recipient) {
         setError('Please enter their email address');
+        setIsSending(false);
         return;
       }
-
-      // Basic email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(recipient)) {
-        setError('Please enter a valid email address');
+      if (!validateEmail(recipient)) {
+        setError('Please enter a valid recipient email address');
+        setIsSending(false);
         return;
       }
-
+      if (!senderEmail) {
+        setError('Please enter your email address');
+        setIsSending(false);
+        return;
+      }
+      if (!validateEmail(senderEmail)) {
+        setError('Please enter a valid email address for yourself');
+        setIsSending(false);
+        return;
+      }
+      setData({ sender_email: senderEmail.trim() });
       await sendGiftEmail();
     } catch (error) {
       console.error('Submit error:', error);
@@ -258,8 +271,8 @@ export default function ContactStep() {
             Don't worry, your identity stays anonymous 😎
           </p>
 
-          <div className="w-full max-w-md">
-            <h2 className="text-lg font-medium mb-3 text-black">Where should we send it?</h2>
+          <div className="w-full max-w-md text-center">
+            <h2 className="text-lg font-medium mb-3 text-black">Who is the lucky person we should send this to?</h2>
             <input
               type="email"
               placeholder="their@email.com"
@@ -270,29 +283,42 @@ export default function ContactStep() {
               }}
               className="w-full p-4 rounded-xl border border-black/20 shadow-sm bg-white
                        focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent
-                       transition-all duration-300"
+                       transition-all duration-300 text-center"
             />
-
+            <h2 className="text-lg font-medium mt-6 mb-3 text-black">Where should we send the reply?</h2>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              value={senderEmail}
+              onChange={(e) => {
+                setSenderEmail(e.target.value);
+                setError(null);
+              }}
+              className="w-full p-4 rounded-xl border border-black/20 shadow-sm bg-white
+                       focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent
+                       transition-all duration-300 text-center"
+              autoComplete="email"
+              inputMode="email"
+            />
+            <p className="text-xs text-gray-500 mt-2 mb-2 text-center">We'll only use this to send you the reply.</p>
             <AnimatePresence>
               {error && (
                 <motion.p
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="text-sm text-red-500 mt-2"
+                  className="text-sm text-red-500 mt-2 text-center"
                 >
                   {error}
                 </motion.p>
               )}
             </AnimatePresence>
-
             <motion.button
               onClick={handleSubmit}
-              disabled={!recipient || isSending}
+              disabled={!recipient || !senderEmail || isSending}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-full 
-                       font-semibold disabled:opacity-50 shadow-lg transition hover:shadow-xl"
+              className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-full font-semibold disabled:opacity-50 shadow-lg transition hover:shadow-xl"
             >
               {isSending ? 'Sending... 🚀' : 'Send it 💌'}
             </motion.button>
