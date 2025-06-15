@@ -47,7 +47,7 @@ export default function ContactStep() {
 
   useEffect(() => {
     const typedData = data as ContactData;
-    if (!typedData.occasion || !typedData.name || !typedData.background || !typedData.gif) {
+    if (!typedData.occasion || !typedData.name || !typedData.background || !typedData.gif || !data.sender_email) {
       router.push('/flow/start');
     }
   }, [data, router]);
@@ -222,7 +222,7 @@ export default function ContactStep() {
 
       <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
         <div className="w-full max-w-2xl">
-          <ProgressBar currentStep={4} totalSteps={4} />
+          <ProgressBar currentStep={5} totalSteps={5} />
         </div>
 
         <div className="mt-8 w-full flex flex-col items-center max-w-2xl">

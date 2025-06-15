@@ -7,6 +7,7 @@ export type GiftData = {
   name: string;
   background: string;
   gif: string;
+  sender_email: string;
 };
 
 type GiftBuilderContextType = {
@@ -22,6 +23,7 @@ const defaultData: GiftData = {
   name: '',
   background: '',
   gif: '',
+  sender_email: '',
 };
 
 const GiftBuilderContext = createContext<GiftBuilderContextType | undefined>(undefined);

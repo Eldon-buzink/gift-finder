@@ -28,7 +28,7 @@ export default function StyleStep() {
 
   const handleNext = () => {
     if (!data.background || !data.gif) return;
-    router.push('/flow/contact');
+    router.push('/flow/email');
   };
 
   return (
