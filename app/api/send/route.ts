@@ -152,11 +152,13 @@ export async function POST(request: Request) {
       }
 
       devLog('Email record updated successfully:', updatedRecord);
+      const viewLink = `${process.env.NEXT_PUBLIC_BASE_URL}/view-reply/${updatedRecord.view_link_id}`;
       return NextResponse.json({ 
         success: true, 
         data: {
           ...emailResult.data,
-          recipient_name: updatedRecord.recipient_name
+          recipient_name: updatedRecord.recipient_name,
+          view_link: viewLink
         }
       });
 

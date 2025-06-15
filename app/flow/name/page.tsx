@@ -79,78 +79,79 @@ export default function NameStep() {
       </button>
 
       <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
-        <div className="w-full max-w-2xl">
-          <ProgressBar currentStep={2} totalSteps={4} />
-        </div>
-        
-        <div className="mt-8 w-full flex flex-col items-center max-w-2xl">
-          <PreviewCard />
+        <div className="w-full max-w-md mx-auto flex flex-col items-center px-4">
+          <div className="w-full">
+            <ProgressBar currentStep={2} totalSteps={4} />
+          </div>
+          <div className="mt-2 w-full flex flex-col items-center">
+            <PreviewCard />
 
-          <motion.h1
-            className="text-3xl sm:text-4xl font-bold text-center mb-6 text-black"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            Who's this for?
-          </motion.h1>
+            <motion.h1
+              className="text-3xl sm:text-4xl font-bold text-center mb-6 text-black"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              Who's this for?
+            </motion.h1>
 
-          <div className="w-full max-w-md">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder={placeholder}
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setError(null);
-                }}
-                className="w-full p-3 border border-black/20 rounded-lg shadow-sm bg-white
-                         focus:outline-none focus:ring-2 focus:ring-black focus:bg-white
-                         transition-all duration-300"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && isValid) {
-                    handleNext();
-                  }
-                }}
-              />
+            <div className="w-full max-w-md">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder={placeholder}
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setError(null);
+                  }}
+                  className="w-full p-3 border border-black/20 rounded-lg shadow-sm bg-white
+                           focus:outline-none focus:ring-2 focus:ring-black focus:bg-white
+                           transition-all duration-300"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && isValid) {
+                      handleNext();
+                    }
+                  }}
+                />
+                <AnimatePresence>
+                  {isValid && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.5 }}
+                      className="absolute right-3 top-3 text-green-500"
+                    >
+                      ✓
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
               <AnimatePresence>
-                {isValid && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.5 }}
-                    className="absolute right-3 top-3 text-green-500"
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="text-sm text-red-500 mt-2"
                   >
-                    ✓
-                  </motion.div>
+                    {error}
+                  </motion.p>
                 )}
               </AnimatePresence>
+
+              <motion.button
+                onClick={handleNext}
+                disabled={!name.trim()}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 
+                         rounded-full font-semibold disabled:opacity-50 shadow-lg transition hover:shadow-xl"
+              >
+                Next
+              </motion.button>
             </div>
-
-            <AnimatePresence>
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="text-sm text-red-500 mt-2"
-                >
-                  {error}
-                </motion.p>
-              )}
-            </AnimatePresence>
-
-            <motion.button
-              onClick={handleNext}
-              disabled={!name.trim()}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 
-                       rounded-full font-semibold disabled:opacity-50 shadow-lg transition hover:shadow-xl"
-            >
-              Next
-            </motion.button>
           </div>
         </div>
       </div>

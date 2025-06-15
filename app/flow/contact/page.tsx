@@ -223,22 +223,19 @@ export default function ContactStep() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-white"
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-white"
     >
-      <button
-        onClick={() => router.back()}
-        className="absolute top-8 left-8 bg-white text-black px-6 py-3 rounded-full font-semibold 
-                   shadow-lg transition hover:shadow-xl hover:scale-105"
-      >
-        ← Back
-      </button>
-
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
-        <div className="w-full max-w-2xl">
+      <div className="w-full max-w-md mx-auto flex flex-col items-center px-4 relative">
+        <button
+          onClick={() => router.back()}
+          className="absolute top-4 left-0 bg-white text-black px-6 py-3 rounded-full font-semibold shadow-lg transition hover:shadow-xl hover:scale-105 z-10"
+        >
+          ← Back
+        </button>
+        <div className="w-full pt-20">
           <ProgressBar currentStep={5} totalSteps={5} />
         </div>
-
-        <div className="mt-8 w-full flex flex-col items-center max-w-2xl">
+        <div className="mt-4 w-full flex flex-col items-center">
           <p className="text-lg text-black/80 text-center mb-4">
             This is what your friend will see — and where they'll share what makes them happy ✨
           </p>

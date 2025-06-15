@@ -57,12 +57,11 @@ export default function StartGiftFlow() {
       transition={{ duration: 0.5 }}
       className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-white"
     >
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
-        <div className="w-full max-w-2xl">
+      <div className="w-full max-w-md mx-auto flex flex-col items-center px-4">
+        <div className="w-full">
           <ProgressBar currentStep={1} totalSteps={4} />
         </div>
-        
-        <div className="mt-8 w-full flex flex-col items-center max-w-2xl">
+        <div className="mt-2 w-full flex flex-col items-center">
           <PreviewCard />
 
           <motion.h1

@@ -36,24 +36,20 @@ export default function StyleStep() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-16 bg-white"
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-8 bg-white"
     >
-      <button
-        onClick={() => router.back()}
-        className="absolute top-8 left-8 bg-white text-black px-6 py-3 rounded-full font-semibold 
-                   shadow-lg transition hover:shadow-xl hover:scale-105"
-      >
-        ← Back
-      </button>
-
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center">
-        <div className="w-full max-w-2xl">
+      <div className="w-full max-w-md mx-auto flex flex-col items-center px-4 relative">
+        <button
+          onClick={() => router.back()}
+          className="absolute top-0 left-0 bg-white text-black px-6 py-3 rounded-full font-semibold shadow-lg transition hover:shadow-xl hover:scale-105 z-10"
+        >
+          ← Back
+        </button>
+        <div className="w-full pt-20">
           <ProgressBar currentStep={3} totalSteps={4} />
         </div>
-
-        <div className="mt-8 w-full flex flex-col items-center max-w-2xl">
+        <div className="mt-4 w-full flex flex-col items-center">
           <PreviewCard />
-
           <motion.h1
             className="text-3xl sm:text-4xl font-bold text-center mb-6 text-black"
             initial={{ opacity: 0, y: -10 }}
@@ -62,8 +58,7 @@ export default function StyleStep() {
           >
             Pick a vibe 🎨
           </motion.h1>
-
-          <div className="w-full max-w-md mb-8">
+          <div className="w-full mb-8">
             <h2 className="text-lg font-medium mb-2 text-black">Background Style</h2>
             <div className="grid grid-cols-3 gap-3">
               {BACKGROUNDS.map((bg) => (
@@ -81,8 +76,7 @@ export default function StyleStep() {
               ))}
             </div>
           </div>
-
-          <div className="w-full max-w-md mb-8">
+          <div className="w-full mb-8">
             <h2 className="text-lg font-medium mb-2 text-black">Choose a GIF</h2>
             <div className="grid grid-cols-3 gap-3">
               {gifs.map((gif) => (
@@ -100,13 +94,12 @@ export default function StyleStep() {
               ))}
             </div>
           </div>
-
           <motion.button
             onClick={handleNext}
             disabled={!data.background || !data.gif}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-full 
+            className="w-full mt-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-full 
                      font-semibold disabled:opacity-50 shadow-lg transition hover:shadow-xl"
           >
             Next
