@@ -23,7 +23,7 @@ export default function ViewReplyPage({ params }: { params: { view_link_id: stri
       setLoading(true);
       setError(null);
       const { data, error } = await supabase
-        .from("gift_requests")
+        .from("emails")
         .select("receiver_name, occasion, reply_message, background, gif_url")
         .eq("view_link_id", view_link_id)
         .single();
