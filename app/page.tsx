@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Hero } from "@/components/ui/Hero";
+import { HowItWorks } from "@/components/ui/HowItWorks";
 
 export default function LandingPage() {
   const usps = [
@@ -53,14 +54,7 @@ export default function LandingPage() {
       <Hero />
 
       {/* How It Works */}
-      <section id="how" className="py-12 max-w-3xl bg-white">
-        <h2 className="text-2xl font-bold mb-6 text-black">How it works</h2>
-        <ol className="space-y-4 text-left text-black">
-          <li><strong>1.</strong> You choose the reason and send a message anonymously.</li>
-          <li><strong>2.</strong> They fill in what makes them happy.</li>
-          <li><strong>3.</strong> You get their answer + smart gift ideas.</li>
-        </ol>
-      </section>
+      <HowItWorks />
 
       {/* USPs */}
       <section className="py-12 px-4 max-w-6xl bg-white">
