@@ -32,8 +32,16 @@ export default function LandingPage() {
       answer: "Nope. It's all web-based and mobile-friendly."
     },
     {
-      question: "Can I send it via WhatsApp?",
-      answer: "Absolutely. Choose email or WhatsApp when you send it."
+      question: "Is this app free?",
+      answer: "Yes! GiftThing is completely free to use. No hidden fees, no subscriptions."
+    },
+    {
+      question: "How do the gift suggestions work?",
+      answer: "Our AI analyzes the recipient's preferences and occasion to recommend unique, thoughtful gifts."
+    },
+    {
+      question: "Can I use this for any occasion?",
+      answer: "Absolutely! Birthdays, holidays, thank-yous, or just because—you choose the occasion."
     }
   ];
 

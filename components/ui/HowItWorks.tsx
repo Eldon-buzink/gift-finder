@@ -10,23 +10,23 @@ const steps = [
     title: "Ask what makes them happy",
     description: "Send an anonymous message asking about their preferences and interests.",
     mockup: (
-      <div className="relative w-full max-w-sm mx-auto bg-white rounded-2xl shadow-xl p-4 flex flex-col gap-4">
-        {/* Gradient header with name, question, and gif */}
-        <div className="relative rounded-xl p-6 pb-10 bg-gradient-to-r from-[#e0c3fc] to-[#8ec5fc] flex flex-col items-center justify-center min-h-[120px]">
-          <div className="absolute top-3 right-3 w-16 h-16 rounded-lg overflow-hidden shadow-md">
-            <img
-              src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2J6d3F2b2J2d3F2b2J2d3F2b2J2d3F2b2J2d3F2b2J2d3F2/g9582DNuQppxC/giphy.gif"
-              alt="Thank you cat gif"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="text-lg font-medium text-black mb-1">Hey [Name]! 👋</div>
-          <div className="text-2xl font-bold text-black text-center leading-tight">
-            What do you want for your <span className="text-pink-500">[Occasion] 🙏</span>?
-          </div>
+      <div className="w-full max-w-md mx-auto mt-4 mb-4 p-6 rounded-xl shadow-xl bg-gradient-to-r from-[#e0c3fc] to-[#8ec5fc] relative">
+        {/* GIF in top-right, similar to PreviewCard */}
+        <div className="absolute -top-8 right-0 w-20 h-20 rounded-lg overflow-hidden shadow-lg bg-white">
+          <img
+            src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2J6d3F2b2J2d3F2b2J2d3F2b2J2d3F2b2J2d3F2b2J2d3F2/g9582DNuQppxC/giphy.gif"
+            alt="Thank you cat gif"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-medium mb-2 text-black">Hey Alex! 👋</p>
+          <p className="text-2xl font-bold text-black">
+            What do you want for your <span className="text-pink-500">Birthday 🙏</span>?
+          </p>
         </div>
         {/* Disabled response box */}
-        <div className="mt-2">
+        <div className="mt-6">
           <input
             type="text"
             disabled
@@ -46,10 +46,10 @@ const steps = [
     mockup: (
       <div className="relative w-full max-w-xl mx-auto bg-gray-50 rounded-2xl shadow-xl p-8 flex flex-col items-center gap-4">
         <div className="text-2xl font-bold text-black text-center mb-2">
-          <span className="font-bold">[Name], what would make you happy?</span> <span className="align-middle">😊</span>
+          <span className="font-bold">Alex, what would make you happy?</span> <span className="align-middle">😊</span>
         </div>
         <div className="text-gray-600 text-center text-lg mb-4">
-          For your <span className="font-semibold">[occasion]</span>, a secret gift ninja wants to make sure you get something you'll love.
+          For your <span className="font-semibold">Birthday</span>, a secret gift ninja wants to make sure you get something you'll love.
         </div>
         <button
           className="rounded-full px-8 py-3 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-500 shadow-md flex items-center gap-2 mb-2"

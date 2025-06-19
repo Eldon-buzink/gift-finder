@@ -18,8 +18,7 @@ interface Suggestion {
 }
 
 export default function ViewReplyPage({ params }: { params: { view_link_id: string } }) {
-  const unwrappedParams = React.use(params as any) as { view_link_id: string };
-  const { view_link_id } = unwrappedParams;
+  const { view_link_id } = params;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<any>(null);
