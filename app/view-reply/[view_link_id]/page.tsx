@@ -17,7 +17,13 @@ interface Suggestion {
   url?: string;
 }
 
-export default function ViewReplyPage({ params }: { params: { view_link_id: string } }) {
+type Props = {
+  params: {
+    view_link_id: string;
+  };
+};
+
+export default function ViewReplyPage({ params }: Props) {
   const { view_link_id } = params;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
