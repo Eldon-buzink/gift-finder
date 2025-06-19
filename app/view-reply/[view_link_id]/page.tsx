@@ -36,7 +36,7 @@ export default function ViewReplyPage({ params }: { params: { view_link_id: stri
         .single();
 
       if (error || !data || !data.reply_message) {
-        setError("This gift request doesn't exist (or has expired).");
+        setError("This gift request doesn&apos;t exist (or has expired).");
         setLoading(false);
         return;
       }
@@ -102,7 +102,7 @@ export default function ViewReplyPage({ params }: { params: { view_link_id: stri
           <p className="text-xl md:text-2xl text-black font-bold">{data.reply_message}</p>
         </div>
         <div className="w-full text-center mb-6">
-          <p className="text-base text-gray-700 font-medium">Thanks for spreading some joy 🎉<br/>We're glad you used our app to make someone's day.</p>
+          <p className="text-base text-gray-700 font-medium">Thanks for spreading some joy 🎉<br/>We&apos;re glad you used our app to make someone&apos;s day.</p>
         </div>
         <div className="w-full text-center mb-6">
           <h2 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2"><span role='img' aria-label='gift'>🎁</span>Suggested gifts</h2>
