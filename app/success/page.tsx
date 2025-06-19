@@ -36,11 +36,11 @@ export default function SuccessPage() {
         <h1 className="text-4xl font-bold text-black">Mission Accomplished!</h1>
         
         <p className="text-xl text-black/80">
-          Your gift ninja request is on its way! We'll let you know when they respond.
+          Your gift ninja request is on its way! We&apos;ll let you know when they respond.
         </p>
         
         <p className="text-sm text-black/60">
-          Remember: your identity is safe with us. They won't know it's you unless you tell them! 🥷
+          Remember: your identity is safe with us. They won&apos;t know it&apos;s you unless you tell them! 🥷
         </p>
 
         <div className="pt-8">

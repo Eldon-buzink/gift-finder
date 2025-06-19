@@ -92,7 +92,7 @@ export default function NameStep() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              Who's this for?
+              Who&apos;s this for?
             </motion.h1>
 
             <div className="w-full max-w-md">

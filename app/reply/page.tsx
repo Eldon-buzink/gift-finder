@@ -21,14 +21,14 @@ const devLog = (...args: any[]) => {
 
 const occasionSuggestions: Record<string, string[]> = {
   'Birthday': [
-    "I'd love a new pair of AirPods! 🎧",
+    "I&apos;d love a new pair of AirPods! 🎧",
     "A spa day would be amazing 💆‍♀️",
     "That book I mentioned would be perfect 📚",
     "Maybe those shoes I showed you? 👟",
     "A nice dinner at my favorite restaurant 🍝",
     "Concert tickets would be incredible! 🎵",
     "A weekend getaway would be dreamy ✈️",
-    "That cozy sweater I've been eyeing 🧥",
+    "That cozy sweater I&apos;ve been eyeing 🧥",
   ],
   'Wedding': [
     "Something for our new home would be lovely 🏠",
@@ -75,7 +75,7 @@ const occasionSuggestions: Record<string, string[]> = {
     "Some cozy baby blankets would be nice 🧸",
     "A white noise machine for bedtime 💤",
     "That baby carrier I showed you 👶",
-    "Some children's books to read together 📚",
+    "Some children&apos;s books to read together 📚",
     "A nice rocking chair would be perfect 💺",
     "That baby monitor we talked about 👶",
     "Some cute nursery decor 🎨",
@@ -119,7 +119,7 @@ const defaultSuggestions = [
   "That thing we talked about! 😊",
   "Maybe something from my wishlist? 📝",
   "A surprise would be fun! 🎉",
-  "I'd love something cozy 🛋️",
+  "I&apos;d love something cozy 🛋️",
   "Something for my hobby perhaps? 🎨",
   "A nice experience would be amazing! 🎭",
 ];
@@ -415,7 +415,7 @@ function ReplyPageContent() {
           <h2 className="text-3xl font-bold mb-4 text-gray-800">
             🎉 Thanks {card?.receiver_name}!
           </h2>
-          <p className="text-gray-600">Your gift ninja will make sure you get something you'll love.</p>
+          <p className="text-gray-600">Your gift ninja will make sure you get something you&apos;ll love.</p>
         </div>
       </div>
     );

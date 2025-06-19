@@ -24,7 +24,7 @@ function parseSuggestion(label: string) {
 export default function GiftSuggestions({ suggestions }: { suggestions: Suggestion[] }) {
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-500 text-center">Here's what could make them smile 👇</p>
+      <p className="text-sm text-gray-500 text-center">Here&apos;s what could make them smile 👇</p>
       <div className="flex flex-col gap-4">
         {suggestions.map((s, i) => {
           const { emoji, headline, description } = parseSuggestion(s.label);

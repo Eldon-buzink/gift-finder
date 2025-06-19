@@ -70,11 +70,11 @@ export default function StartGiftFlow() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            What's the occasion?
+            What&apos;s the occasion?
           </motion.h1>
 
           <p className="text-center text-black/80 max-w-sm mb-8">
-            Choose one, or make it your own. We'll keep it anonymous either way.
+            Choose one, or make it your own. We&apos;ll keep it anonymous either way.
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-md w-full mb-6">
@@ -127,7 +127,7 @@ export default function StartGiftFlow() {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="e.g. Sophie's puppy shower 🐶"
+                    placeholder="e.g. Sophie&apos;s puppy shower 🐶"
                     value={customLabel}
                     onChange={(e) => {
                       setCustomLabel(e.target.value);

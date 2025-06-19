@@ -20,7 +20,7 @@ const steps = [
           />
         </div>
         <div className="text-center">
-          <p className="text-lg font-medium mb-2 text-black">Hey Alex! 👋</p>
+          <p className="text-lg font-medium mb-2 text-black">Hey Alex! &apos;👋</p>
           <p className="text-2xl font-bold text-black">
             What do you want for your <span className="text-pink-500">Birthday 🙏</span>?
           </p>
@@ -49,7 +49,7 @@ const steps = [
           <span className="font-bold">Alex, what would make you happy?</span> <span className="align-middle">😊</span>
         </div>
         <div className="text-gray-600 text-center text-lg mb-4">
-          For your <span className="font-semibold">Birthday</span>, a secret gift ninja wants to make sure you get something you'll love.
+          For your <span className="font-semibold">Birthday</span>, a secret gift ninja wants to make sure you get something you&apos;ll love.
         </div>
         <button
           className="rounded-full px-8 py-3 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-500 shadow-md flex items-center gap-2 mb-2"
@@ -82,7 +82,7 @@ const steps = [
           <p className="text-xl md:text-2xl text-black font-bold">A cozy night in with a good book and some chocolate 🍫📚</p>
         </div>
         <div className="w-full text-center mb-6">
-          <p className="text-base text-gray-700 font-medium">Thanks for spreading some joy 🎉<br/>We're glad you used our app to make someone's day.</p>
+          <p className="text-base text-gray-700 font-medium">Thanks for spreading some joy 🎉<br/>We&apos;re glad you used our app to make someone&apos;s day.</p>
         </div>
         <div className="w-full text-center mb-6">
           <h2 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2"><span role='img' aria-label='gift'>🎁</span>Suggested gifts</h2>

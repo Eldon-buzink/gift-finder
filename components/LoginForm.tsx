@@ -30,7 +30,7 @@ export default function LoginForm() {
       className="w-full max-w-md space-y-4 p-6 bg-white rounded-2xl shadow-xl text-center"
     >
       <h1 className="text-2xl font-bold">🎁 Welcome to Gift Hunt</h1>
-      <p className="text-sm text-gray-500">Let's figure out what they *really* want</p>
+      <p className="text-sm text-gray-500">Let&apos;s figure out what they *really* want</p>
 
       <input
         type="email"
@@ -49,7 +49,7 @@ export default function LoginForm() {
         {loading ? 'Sending the magic... 🔮' : 'Send me the magic link 🔑'}
       </button>
 
-      <p className="text-xs text-gray-400">You'll stay anonymous. Like a gift ninja 🥷</p>
+      <p className="text-xs text-gray-400">You&apos;ll stay anonymous. Like a gift ninja 🥷</p>
     </form>
   );
 } 

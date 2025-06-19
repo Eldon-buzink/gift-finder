@@ -237,7 +237,7 @@ export default function ContactStep() {
         </div>
         <div className="mt-4 w-full flex flex-col items-center">
           <p className="text-lg text-black/80 text-center mb-4">
-            This is what your friend will see — and where they'll share what makes them happy ✨
+            This is what your friend will see — and where they&apos;ll share what makes them happy ✨
           </p>
 
           <div className="w-full max-w-md mb-12">
@@ -261,11 +261,11 @@ export default function ContactStep() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            Let's send this thing 🚀
+            Let&apos;s send this thing 🚀
           </motion.h1>
 
           <p className="text-sm text-black/60 text-center mb-8">
-            Don't worry, your identity stays anonymous 😎
+            Don&apos;t worry, your identity stays anonymous 😎
           </p>
 
           <div className="w-full max-w-md text-center">
@@ -297,7 +297,7 @@ export default function ContactStep() {
               autoComplete="email"
               inputMode="email"
             />
-            <p className="text-xs text-gray-500 mt-2 mb-2 text-center">We'll only use this to send you the reply.</p>
+            <p className="text-xs text-gray-500 mt-2 mb-2 text-center">We&apos;ll only use this to send you the reply.</p>
             <AnimatePresence>
               {error && (
                 <motion.p
