@@ -16,9 +16,9 @@ export default function LandingPage() {
       text: "No more doom-shopping or 14-tab gift searches. Send one message and let them tell you what they want.",
     },
     {
-      emoji: "😊",
-      title: "Give joy, not just gifts",
-      text: "Figure out what really makes someone happy — with zero awkward convos or group chats.",
+      emoji: "🤖",
+      title: "Get smart gift suggestions",
+      text: "Our AI analyzes their preferences and suggests perfect gifts you'd never think of.",
     },
   ];
 
@@ -45,7 +45,6 @@ export default function LandingPage() {
         <div className="space-x-4 hidden sm:block">
           <Link href="#how" className="text-black hover:text-gray-800">How it works</Link>
           <Link href="#faq" className="text-black hover:text-gray-800">FAQ</Link>
-          <Link href="/login" className="text-black hover:text-gray-800">Login</Link>
           <Link href="/flow/start" className="text-black hover:text-gray-800">Create a Gift</Link>
         </div>
       </nav>
@@ -53,15 +52,12 @@ export default function LandingPage() {
       {/* Hero */}
       <Hero />
 
-      {/* How It Works */}
-      <HowItWorks />
-
       {/* USPs */}
       <section className="py-12 px-4 max-w-6xl bg-white">
         <h2 className="text-2xl font-bold text-center mb-8 text-black">Why use this tool?</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {usps.map(({ emoji, title, text }, i) => (
-            <Card key={i} className="p-4 flex flex-col items-start bg-white shadow-xl rounded-2xl">
+            <Card key={i} className="p-4 flex flex-col items-center bg-white shadow-xl rounded-2xl text-center">
               <div className="text-3xl mb-2">{emoji}</div>
               <h3 className="text-lg font-semibold mb-1 text-black">{title}</h3>
               <p className="text-sm text-gray-600">{text}</p>
@@ -69,6 +65,9 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* How It Works */}
+      <HowItWorks />
 
       {/* FAQ */}
       <section id="faq" className="py-12 max-w-3xl bg-white">

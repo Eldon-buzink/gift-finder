@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
+import GiftSuggestions from '../GiftSuggestions';
 
 const steps = [
   {
@@ -69,22 +70,30 @@ const steps = [
     title: "Get their reply and suggestions",
     description: "Receive their preferences along with personalized gift recommendations.",
     mockup: (
-      <div className="relative w-full max-w-sm mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-        <div className="p-4 bg-gradient-to-r from-purple-600 to-pink-600">
-          <div className="h-2 w-2 rounded-full bg-white/50" />
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center mx-auto">
+        <h1 className="text-2xl md:text-3xl font-bold text-center mb-4">Alex replied!</h1>
+        <div className="w-full flex justify-center my-4">
+          <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2J6d3F2b2J2d3F2b2J2d3F2b2J2d3F2b2J2d3F2b2J2d3F2/g9582DNuQppxC/giphy.gif" alt="Gift gif" width={200} height={200} className="rounded-xl shadow-md border border-gray-200" />
         </div>
-        <div className="p-6">
-          <div className="space-y-4">
-            <div className="h-6 w-3/4 bg-gray-100 rounded" />
-            <div className="space-y-2">
-              {['Books 📚', 'Tech gadgets 🎮', 'Art supplies 🎨', 'Cooking tools 👨‍🍳'].map((item, i) => (
-                <div key={i} className="h-10 bg-gray-50 border border-gray-100 rounded-lg flex items-center px-4 text-sm">
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="w-full text-center text-lg md:text-xl text-gray-700 mb-4 font-medium">
+          What makes <span className="text-purple-700 font-bold">Alex</span> really happy for their <span className="text-pink-600 font-bold">Birthday</span> is
         </div>
+        <div className="w-full rounded-2xl p-6 mb-6 text-center bg-gray-50 border border-purple-100 shadow-md animate-fade-in">
+          <p className="text-xl md:text-2xl text-black font-bold">A cozy night in with a good book and some chocolate 🍫📚</p>
+        </div>
+        <div className="w-full text-center mb-6">
+          <p className="text-base text-gray-700 font-medium">Thanks for spreading some joy 🎉<br/>We're glad you used our app to make someone's day.</p>
+        </div>
+        <div className="w-full text-center mb-6">
+          <h2 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2"><span role='img' aria-label='gift'>🎁</span>Suggested gifts</h2>
+          {/* Hardcoded suggestions for demo */}
+          <GiftSuggestions suggestions={[
+            { label: '📚 A bestselling novel - Perfect for a cozy night in' },
+            { label: '🍫 Gourmet chocolate box - Indulgent treats for relaxation' },
+            { label: '🕯️ Scented candle - Set the mood for reading' },
+          ]} />
+        </div>
+        <button className="w-full mt-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg shadow text-center font-semibold" disabled>Send another gift request</button>
       </div>
     )
   }

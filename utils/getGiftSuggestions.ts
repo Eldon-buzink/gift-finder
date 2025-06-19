@@ -3,8 +3,9 @@ import { openai } from '@/lib/openai';
 export async function getGiftSuggestions(reply: string, occasion: string) {
   const prompt = `
 Give me 3 short, fun gift suggestions for the reply: "${reply}", for a "${occasion}" occasion. 
-Include a mix of creative, low-cost or free ideas and 1 or 2 product links if relevant.
-Respond as a JSON array of 3 objects with "label" (string), and optional "url" (string).
+Include a mix of creative, low-cost or free ideas and 1 or 2 product links if relevant. 
+Respond as a JSON array of 3 objects with "label" (string), and optional "url" (string). - "label": an emoji, a short headline, a dash, then a short description.
+Format: "🎁 Gift title - One-line description"
 Do not include any code blocks. Respond with ONLY valid JSON.
 `;
 
