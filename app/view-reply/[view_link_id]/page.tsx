@@ -2,9 +2,16 @@ import { use } from 'react';
 import { createServerClient } from '@/lib/supabase-server';
 import { notFound } from 'next/navigation';
 
-export default async function Page({ params }: { params: Promise<{ view_link_id: string }> }) {
-  const { view_link_id } = use(params);
+type Params = {
+  view_link_id: string;
+};
 
+export default function PageWrapper({ params }: { params: Promise<Params> }) {
+  const resolvedParams = use(params);
+  return <PageInner view_link_id={resolvedParams.view_link_id} />;
+}
+
+async function PageInner({ view_link_id }: { view_link_id: string }) {
   try {
     console.log("🧠 Rendering view-reply page:", view_link_id);
 
