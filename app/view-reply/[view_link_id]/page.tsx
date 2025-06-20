@@ -2,44 +2,27 @@ import { use } from 'react';
 import { createServerClient } from '@/lib/supabase-server';
 import { notFound } from 'next/navigation';
 
-type Params = {
-  view_link_id: string;
-};
-
-type ReplyData = {
-  receiver_name: string;
-  reply_message: string;
-  occasion: string;
-  background: string;
-  gif_url: string;
-};
-
-export default async function Page({ params }: { params: Promise<Params> }) {
+export default async function Page({ params }: { params: Promise<{ view_link_id: string }> }) {
   const { view_link_id } = use(params);
-  console.log("Rendering View Reply page for:", view_link_id);
-
-  const supabase = createServerClient();
 
   try {
+    console.log("🧠 Rendering view-reply page:", view_link_id);
+
+    const supabase = createServerClient();
+    console.log("🔐 Supabase client initialized");
+
     const { data, error } = await supabase
       .from('emails')
       .select('receiver_name, reply_message, occasion, background, gif_url')
       .eq('view_link_id', view_link_id)
       .single();
 
-    console.log("Supabase fetch result:", { data, error });
+    console.log("📬 Supabase query result:", { data, error });
 
-    if (error) {
-      console.error("Supabase query error:", error);
-      throw error; // to trigger error UI
+    if (error || !data) {
+      console.error("❌ No data returned or query failed");
+      notFound();
     }
-
-    if (!data || !data.reply_message || !data.receiver_name) {
-      console.warn("Missing reply data for:", view_link_id);
-      notFound(); // from next/navigation
-    }
-
-    const replyData: ReplyData = data;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
@@ -49,7 +32,7 @@ export default async function Page({ params }: { params: Promise<Params> }) {
               🎁 Gift Reply
             </h1>
             <p className="text-gray-600">
-              From {replyData.receiver_name}
+              From {data.receiver_name}
             </p>
           </div>
 
@@ -58,13 +41,13 @@ export default async function Page({ params }: { params: Promise<Params> }) {
               What makes me happy:
             </h2>
             <p className="text-gray-700 leading-relaxed">
-              {replyData.reply_message}
+              {data.reply_message}
             </p>
           </div>
 
-          {replyData.occasion && (
+          {data.occasion && (
             <div className="text-sm text-gray-500">
-              Occasion: {replyData.occasion}
+              Occasion: {data.occasion}
             </div>
           )}
 
@@ -74,13 +57,13 @@ export default async function Page({ params }: { params: Promise<Params> }) {
         </div>
       </div>
     );
-  } catch (error) {
-    console.error('Unexpected error:', error);
+  } catch (err) {
+    console.error("💥 Unexpected error in view-reply page:", err);
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-          <p className="text-gray-600">Something went wrong while loading the gift reply.</p>
+          <p className="text-gray-600">Unexpected error loading reply.</p>
           <div className="mt-4 text-xs text-gray-400">
             View link ID: {view_link_id}
           </div>
