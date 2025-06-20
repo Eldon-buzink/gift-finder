@@ -16,78 +16,27 @@ type ReplyData = {
 
 export default async function Page({ params }: { params: Promise<Params> }) {
   const { view_link_id } = use(params);
-  
-  // Debug: Check if environment variables are available
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.error('Missing Supabase environment variables');
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Configuration Error</h1>
-          <p className="text-gray-600">Missing Supabase configuration</p>
-        </div>
-      </div>
-    );
-  }
+  console.log("Rendering View Reply page for:", view_link_id);
 
   const supabase = createServerClient();
 
   try {
-    console.log('Querying Supabase for view_link_id:', view_link_id);
-    console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log('Supabase Key exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-    
-    // First, let's try to check if we can connect to Supabase at all
-    const { data: testData, error: testError } = await supabase
-      .from('emails')
-      .select('count')
-      .limit(1);
-
-    console.log('Test query result:', { testData, testError });
-
-    if (testError) {
-      console.error('Test query failed:', testError);
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Database Error</h1>
-            <p className="text-gray-600">Unable to connect to database</p>
-            <div className="mt-4 text-xs text-gray-400">
-              Error: {testError.message}
-            </div>
-          </div>
-        </div>
-      );
-    }
-    
-    // Query Supabase for the reply data
     const { data, error } = await supabase
       .from('emails')
       .select('receiver_name, reply_message, occasion, background, gif_url')
       .eq('view_link_id', view_link_id)
       .single();
 
-    console.log('Supabase response:', { data, error });
+    console.log("Supabase fetch result:", { data, error });
 
-    // If no data found or no reply message, show not found
     if (error) {
-      console.error('Supabase error:', error);
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Database Error</h1>
-            <p className="text-gray-600">Error querying database</p>
-            <div className="mt-4 text-xs text-gray-400">
-              Error: {error.message}
-            </div>
-          </div>
-        </div>
-      );
+      console.error("Supabase query error:", error);
+      throw error; // to trigger error UI
     }
 
-    if (!data || !data.reply_message) {
-      console.error('No data or reply message found for view_link_id:', view_link_id);
-      notFound();
+    if (!data || !data.reply_message || !data.receiver_name) {
+      console.warn("Missing reply data for:", view_link_id);
+      notFound(); // from next/navigation
     }
 
     const replyData: ReplyData = data;
