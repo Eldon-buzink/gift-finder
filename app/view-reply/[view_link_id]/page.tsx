@@ -34,6 +34,31 @@ export default async function Page({ params }: { params: Promise<Params> }) {
 
   try {
     console.log('Querying Supabase for view_link_id:', view_link_id);
+    console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('Supabase Key exists:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+    
+    // First, let's try to check if we can connect to Supabase at all
+    const { data: testData, error: testError } = await supabase
+      .from('emails')
+      .select('count')
+      .limit(1);
+
+    console.log('Test query result:', { testData, testError });
+
+    if (testError) {
+      console.error('Test query failed:', testError);
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Database Error</h1>
+            <p className="text-gray-600">Unable to connect to database</p>
+            <div className="mt-4 text-xs text-gray-400">
+              Error: {testError.message}
+            </div>
+          </div>
+        </div>
+      );
+    }
     
     // Query Supabase for the reply data
     const { data, error } = await supabase
@@ -47,7 +72,17 @@ export default async function Page({ params }: { params: Promise<Params> }) {
     // If no data found or no reply message, show not found
     if (error) {
       console.error('Supabase error:', error);
-      notFound();
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Database Error</h1>
+            <p className="text-gray-600">Error querying database</p>
+            <div className="mt-4 text-xs text-gray-400">
+              Error: {error.message}
+            </div>
+          </div>
+        </div>
+      );
     }
 
     if (!data || !data.reply_message) {
