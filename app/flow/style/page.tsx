@@ -20,7 +20,7 @@ export default function StyleStep() {
   const { data, setData } = useGiftBuilder();
   const { occasion, name } = data as StyleData;
 
-  const gifs: GifItem[] = GIFS[occasion as keyof typeof GIFS] || GIFS['Birthday'];
+  const gifs: GifItem[] = GIFS[occasion as keyof typeof GIFS] || GIFS['Other'];
 
   useEffect(() => {
     if (!occasion || !name) router.push('/flow/name');
